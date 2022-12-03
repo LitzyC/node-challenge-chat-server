@@ -31,13 +31,16 @@ app.get("/messages", function (request, response) {
 
 app.post("/messages", (request, response) => {
   const newId = messages.length > 0 ? messages[messages.length - 1].id + 1 : 0;
+  
+  if (!request.body.from && !request.body.text) {
+    response.status(400).json("FALTAN DATOS");
+  }
+
   const newMessage = {
     id: newId,
     ...request.body, //--suggar sintax --
   };
-  if(newMessage == request.body > 0){
-    response.status(400).json(newMessage);
-  }
+  
   messages.push(newMessage);
   response.status(201).json(newMessage);
 });
