@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 //EL BODY PARSER PARA OBTENER LOS DATOS DEL REQUEST BODY
 const bodyParser = require("body-parser");
-const { request } = require("express");
+const { request, response } = require("express");
 
 const app = express();
 
@@ -21,17 +21,36 @@ const welcomeMessage = {
 //Note: messages will be lost when Glitch restarts our server.
 const messages = [welcomeMessage];
 
-app.get("/", function (request, response) {
+app.get("/", (request, response) =>{
   response.sendFile(__dirname + "/index.html");
 });
 
-app.get("/messages", function (request, response) {
+//LEVEL 3
+//Lack the exercise
+app.get("/messages/:search", (request, response) => {
+  const searchMessage = request.query.search;
+  const result = messages.find((mss) => mss.from && mss.text == searchMessage);
+  if (result) {
+    response.json(result);
+  } else {
+    response.sendFile(__dirname + "/source/404.html");
+  }
+});
+
+app.get("/messages/latest", (request, res) => {
+  const latestMss = messages.slice(messages.length - 10);
+  res.send(latestMss);
+});
+
+//LEVEL 1
+app.get("/messages", (request, response) => {
   response.status(200).json(messages);
 });
 
 app.post("/messages", (request, response) => {
   const newId = messages.length > 0 ? messages[messages.length - 1].id + 1 : 0;
   
+  //LEVEL 2
   if (!request.body.from && !request.body.text) {
     response.status(400).json("FALTAN DATOS");
   }
@@ -45,7 +64,7 @@ app.post("/messages", (request, response) => {
   response.status(201).json(newMessage);
 });
 
-app.get("/messages/:messages_ID", function (request, response) {
+app.get("/messages/:messages_ID", (request, response) => {
   const messagesId = request.params.messages_ID;
   const result = messages.find((m) => m.id == messagesId);
   if (result) {
