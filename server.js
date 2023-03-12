@@ -27,7 +27,7 @@ app.get("/", (request, response) =>{
 
 //LEVEL 3
 //Lack the exercise
-app.get("/messages/:search", (request, response) => {
+app.get("/messages/search", (request, response) => {
   const searchMessage = request.query.search;
   const result = messages.find((mss) => mss.from && mss.text == searchMessage);
   if (result) {
